@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f9f9f7">
+<title>Le mie spese</title>
+<link rel="stylesheet" href="style.css?v=87154f94">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- ===================== SBLOCCO ===================== -->
+<section id="sblocco" class="sblocco">
+  <div class="sblocco-box">
+    <h1>Le mie spese</h1>
+    <p class="muted">I dati sono cifrati. Inserisci la password per aprirli.</p>
+    <form id="form-sblocco">
+      <input type="password" id="password" placeholder="Password"
+             autocomplete="current-password" required>
+      <label class="ricorda">
+        <input type="checkbox" id="ricorda"> Ricorda su questo telefono
+      </label>
+      <button type="submit" id="btn-sblocca">Apri</button>
+    </form>
+    <p id="errore-sblocco" class="errore" hidden></p>
+    <p id="stato-sblocco" class="muted piccolo" hidden>Decifratura in corso…</p>
+  </div>
+</section>
+
+<!-- ===================== APP ===================== -->
+<main id="app" hidden>
+
+  <header class="testata">
+    <div>
+      <h1 id="titolo-sezione">Panoramica</h1>
+      <p class="muted piccolo" id="sottotitolo-periodo"></p>
+    </div>
+    <button id="btn-tema" class="icona" title="Cambia tema" aria-label="Cambia tema">◐</button>
+  </header>
+
+  <!-- filtri: una riga sopra i grafici -->
+  <div class="filtri" id="filtri">
+    <select id="periodo" aria-label="Periodo">
+      <option value="12">Ultimi 12 mesi</option>
+      <option value="6">Ultimi 6 mesi</option>
+      <option value="3">Ultimi 3 mesi</option>
+      <option value="anno">Anno in corso</option>
+      <option value="tutto">Tutto lo storico</option>
+      <option value="custom">Periodo personalizzato…</option>
+    </select>
+    <select id="filtro-macro" aria-label="Tipo di spesa">
+      <option value="">Tutte le spese</option>
+      <option value="Ordinario">Solo ordinario</option>
+      <option value="Vacanze">Solo vacanze</option>
+      <option value="Lavoro SACE">Solo lavoro SACE</option>
+      <option value="Famiglia Palermo">Solo Palermo</option>
+    </select>
+    <select id="filtro-conto" aria-label="Conto o carta" hidden></select>
+  </div>
+  <div class="filtri" id="filtri-custom" hidden>
+    <input type="month" id="da-mese" aria-label="Da"><span class="muted">→</span>
+    <input type="month" id="a-mese" aria-label="A">
+  </div>
+
+  <!-- ---------- PANORAMICA ---------- -->
+  <section class="pagina" id="pag-panoramica">
+    <div class="tessere" id="tessere"></div>
+
+    <figure class="scheda">
+      <figcaption>
+        <h2>Spese ed entrate per mese</h2>
+        <p class="muted piccolo">Tocca il grafico per leggere i valori di un mese.</p>
+      </figcaption>
+      <div class="legenda" id="legenda-andamento"></div>
+      <div class="grafico" id="graf-andamento"></div>
+    </figure>
+
+    <figure class="scheda">
+      <figcaption>
+        <h2>Ordinario, vacanze e lavoro</h2>
+        <p class="muted piccolo">Come si dividono le uscite mese per mese.</p>
+      </figcaption>
+      <div class="legenda" id="legenda-macro"></div>
+      <div class="grafico" id="graf-macro"></div>
+    </figure>
+
+    <figure class="scheda">
+      <figcaption><h2>Quanto resta ogni mese</h2>
+      <p class="muted piccolo">Entrate meno spese. Sotto lo zero stai intaccando i risparmi.</p></figcaption>
+      <div class="grafico" id="graf-risparmio"></div>
+    </figure>
+
+    <figure class="scheda" id="scheda-confronto">
+      <figcaption>
+        <h2>Quest'anno contro l'anno scorso</h2>
+        <p class="muted piccolo" id="nota-confronto"></p>
+      </figcaption>
+      <div class="legenda" id="legenda-confronto"></div>
+      <div class="grafico" id="graf-confronto"></div>
+    </figure>
+
+    <div class="scheda" id="scheda-conti"></div>
+    <div class="scheda" id="scheda-proiezione"></div>
+  </section>
+
+  <!-- ---------- CATEGORIE ---------- -->
+  <section class="pagina" id="pag-categorie" hidden>
+    <div class="tessere" id="tessere-categorie"></div>
+    <figure class="scheda">
+      <figcaption><h2>Dove vanno i soldi</h2>
+      <p class="muted piccolo" id="nota-categorie"></p></figcaption>
+      <div class="grafico" id="graf-categorie"></div>
+    </figure>
+    <div class="scheda" id="scheda-budget">
+      <h2>Tetti di spesa</h2>
+      <p class="muted piccolo">Fissa un tetto mensile e controlla se lo stai
+        rispettando. Il confronto è con la media del periodo selezionato.</p>
+      <div id="elenco-budget"></div>
+    </div>
+    <figure class="scheda" id="scheda-portali">
+      <figcaption>
+        <h2>Acquisti sui portali</h2>
+        <p class="muted piccolo" id="nota-portali"></p>
+      </figcaption>
+      <div class="grafico" id="graf-portali"></div>
+      <div class="legenda" id="legenda-online" style="margin:14px 0 6px"></div>
+      <div class="grafico" id="graf-online-mese"></div>
+      <div id="dettaglio-portale"></div>
+    </figure>
+
+    <details class="scheda">
+      <summary>Vedi come tabella</summary>
+      <div id="tabella-categorie"></div>
+    </details>
+    <div id="dettaglio-categoria"></div>
+  </section>
+
+  <!-- ---------- VIAGGI ---------- -->
+  <section class="pagina" id="pag-viaggi" hidden>
+    <div id="elenco-viaggi"></div>
+  </section>
+
+  <!-- ---------- DA RIVEDERE ---------- -->
+  <section class="pagina" id="pag-rivedere" hidden>
+    <div class="filtri">
+      <button class="secondario tab-rivedi attivo" data-vista="classificare">
+        Da classificare</button>
+      <button class="secondario tab-rivedi" data-vista="dubbi">Casi dubbi</button>
+    </div>
+
+    <div id="vista-classificare">
+      <div class="scheda avviso" id="intro-classificare"></div>
+      <div id="elenco-classificare"></div>
+      <button id="btn-altri" class="secondario" hidden
+        style="width:100%;margin-bottom:12px">Mostrane altri</button>
+    </div>
+
+    <div id="vista-dubbi" hidden>
+      <div class="scheda avviso" id="intro-rivedere"></div>
+      <div id="elenco-rivedere"></div>
+    </div>
+
+    <div class="scheda" id="box-export" hidden>
+      <h2>Salva le tue scelte sul PC</h2>
+      <p class="muted piccolo">Quello che decidi qui resta su questo telefono.
+        Per renderlo definitivo scarica i file e mettili nella cartella
+        <code>data</code> del PC, poi rilancia <code>aggiorna.bat</code>.</p>
+      <div class="azioni">
+        <button id="btn-export-regole">Scarica regole esercenti</button>
+        <button id="btn-export" class="secondario">Scarica correzioni singole</button>
+      </div>
+      <p class="muted piccolo" id="conteggio-correzioni"></p>
+    </div>
+  </section>
+
+  <!-- ---------- RISPARMIO ---------- -->
+  <section class="pagina" id="pag-risparmio" hidden>
+    <div id="contenuto-risparmio"></div>
+  </section>
+
+  <!-- ---------- RISTORANTI ---------- -->
+  <section class="pagina" id="pag-ristoranti" hidden>
+    <div class="tessere" id="tessere-risto"></div>
+
+    <figure class="scheda">
+      <figcaption><h2>Roma, Milano e il resto</h2>
+      <p class="muted piccolo" id="nota-risto-citta"></p></figcaption>
+      <div class="grafico" id="graf-risto-citta"></div>
+      <div class="legenda" id="legenda-risto" style="margin:14px 0 6px"></div>
+      <div class="grafico" id="graf-risto-mese"></div>
+    </figure>
+
+    <figure class="scheda">
+      <figcaption><h2>Che tipo di uscite sono</h2>
+      <p class="muted piccolo">Divise per importo: il caffè al banco e la cena
+        pesano in modo diverso sul totale.</p></figcaption>
+      <div class="grafico" id="graf-risto-fasce"></div>
+    </figure>
+
+    <div class="scheda" id="risto-delivery"></div>
+    <div class="scheda" id="risto-locali"></div>
+    <div class="scheda avviso" id="risto-leve"></div>
+  </section>
+
+  <!-- ---------- MOVIMENTI ---------- -->
+  <section class="pagina" id="pag-movimenti" hidden>
+    <input type="search" id="cerca" placeholder="Cerca un esercente…" class="ricerca">
+    <div id="elenco-movimenti"></div>
+  </section>
+
+  <nav class="barra">
+    <button class="attivo" data-pagina="panoramica"><span>◧</span>Panoramica</button>
+    <button data-pagina="categorie"><span>▤</span>Categorie</button>
+    <button data-pagina="viaggi"><span>✈</span>Viaggi</button>
+    <button data-pagina="rivedere"><span>!</span>Rivedi<em id="pallino" hidden></em></button>
+    <button data-pagina="ristoranti"><span>✻</span>Ristoranti</button>
+    <button data-pagina="risparmio"><span>◆</span>Risparmio</button>
+    <button data-pagina="movimenti"><span>≡</span>Movimenti</button>
+  </nav>
+</main>
+
+<div id="tooltip" class="tooltip" hidden></div>
+
+<script src="app.js?v=87154f94"></script>
+</body>
+</html>

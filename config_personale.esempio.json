@@ -1,0 +1,19 @@
+{
+  "_istruzioni": "Copia questo file in data/config_personale.json e compilalo. La cartella data/ non finisce mai su GitHub.",
+
+  "titolare": "Nome Cognome",
+  "familiari": ["Nome di un familiare"],
+  "email": "tuo.indirizzo@example.com",
+
+  "citta_abituali": ["milano", "roma"],
+  "citta_famiglia": ["citta dove vive la famiglia"],
+  "nome_macro_famiglia": "Trasferte familiari",
+
+  "conti_destinazione": {
+    "IT00X0000": "Mutuo",
+    "IT00Y0000": "Ricariche portafoglio"
+  },
+  "importi_ricorrenti": {
+    "200.0": "Mutuo"
+  }
+}

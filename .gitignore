@@ -1,0 +1,14 @@
+# MAI su GitHub: contengono i tuoi dati in chiaro
+data/
+*.json
+!sito/manifest.json
+!config_personale.esempio.json
+.venv/
+__pycache__/
+*.pyc
+verifica_*.py
+
+# gli estratti conto originali restano solo sul PC
+*.pdf
+*.xlsx
+*.xls
