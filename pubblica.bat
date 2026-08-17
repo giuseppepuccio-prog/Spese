@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 chcp 65001 >nul
 cd /d "%~dp0"
 title Pubblica le spese su GitHub
@@ -61,10 +61,11 @@ if errorlevel 1 (
   echo.
   echo   Ora attiva GitHub Pages, una volta sola:
   echo     Settings  ^>  Pages  ^>  Source: Deploy from a branch
-  echo     Branch: main    cartella: /sito    poi Save
+  echo     Branch: main    cartella: /docs    poi Save
   echo.
   echo   Dopo qualche minuto il sito sara' su:
   echo     https://giuseppepuccio-prog.github.io/Spese/
   echo.
 )
 pause
+

@@ -30,7 +30,9 @@ RADICE = os.path.dirname(os.path.abspath(__file__))
 BASE_DATI = r"C:\Users\giuse\OneDrive\Documenti\07. Spese Personali"
 FILE_OVERRIDE = os.path.join(RADICE, "data", "override.json")
 FILE_REGOLE = os.path.join(RADICE, "data", "regole_personali.json")
-SITO = os.path.join(RADICE, "sito")
+# GitHub Pages pubblica solo dalla radice o da una cartella chiamata "docs":
+# altri nomi non compaiono nemmeno fra le opzioni.
+SITO = os.path.join(RADICE, "docs")
 
 ITERAZIONI = 250_000  # PBKDF2: alto abbastanza da rendere lento un attacco
 

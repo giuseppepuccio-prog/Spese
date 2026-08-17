@@ -1,7 +1,7 @@
 # MAI su GitHub: contengono i tuoi dati in chiaro
 data/
 *.json
-!sito/manifest.json
+!docs/manifest.json
 !config_personale.esempio.json
 .venv/
 __pycache__/

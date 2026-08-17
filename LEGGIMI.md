@@ -129,7 +129,12 @@ git remote add origin https://github.com/TUO-UTENTE/spese.git
 git push -u origin main
 ```
 
-Poi su GitHub: **Settings → Pages → Source: main, cartella `/sito`**.
+Poi su GitHub: **Settings → Pages → Source: Deploy from a branch →
+Branch: main, cartella `/docs`**.
+
+La cartella del sito si chiama `docs` per obbligo di GitHub Pages, che
+pubblica soltanto dalla radice del repository o da una cartella con quel
+nome esatto: altri nomi non compaiono nemmeno nell'elenco.
 
 Il `.gitignore` esclude già gli estratti originali e i dati in chiaro: su
 GitHub va solo il file cifrato. **Verifica sempre con `git status` che non

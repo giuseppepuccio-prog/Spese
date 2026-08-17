@@ -81,7 +81,7 @@ def main() -> int:
         except Exception:
             genera_certificato(ip)
 
-    os.chdir(os.path.join(RADICE, "sito"))
+    os.chdir(os.path.join(RADICE, "docs"))
     contesto = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     contesto.load_cert_chain(CERT, CHIAVE)
 
