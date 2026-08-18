@@ -204,6 +204,10 @@ function periodoSelezionato() {
 
   if (scelta === 'tutto') return { da: mesi[0], a: ultimo };
   if (scelta === 'anno') return { da: ultimo.slice(0, 4) + '-01', a: ultimo };
+  if (scelta.startsWith('anno-')) {
+    const y = scelta.slice(5);
+    return { da: `${y}-01`, a: `${y}-12` };
+  }
   if (scelta === 'custom') {
     return { da: $('#da-mese').value || mesi[0], a: $('#a-mese').value || ultimo };
   }
@@ -2156,6 +2160,32 @@ $('#btn-tema').addEventListener('click', () => {
 let attesa;
 addEventListener('resize', () => { clearTimeout(attesa); attesa = setTimeout(disegna, 180); });
 
+/* Gli anni disponibili si ricavano dai dati: l'elenco cresce da solo quando
+   arriva un anno nuovo, senza bisogno di toccare il codice. */
+function preparaAnni() {
+  const select = $('#periodo');
+  if (select.querySelector('optgroup[data-anni]')) return;   // già fatto
+
+  const anni = [...new Set(DATI.statistiche.mensili
+    .map((m) => m.mese.slice(0, 4)))].sort().reverse();
+  if (anni.length < 2) return;
+
+  const gruppo = document.createElement('optgroup');
+  gruppo.label = 'Anno intero';
+  gruppo.setAttribute('data-anni', '1');
+  anni.forEach((y) => {
+    const mesi = DATI.statistiche.mensili.filter((m) => m.mese.startsWith(y)).length;
+    const opt = document.createElement('option');
+    opt.value = `anno-${y}`;
+    opt.textContent = mesi >= 12 ? y
+      : `${y} (${mesi} ${mesi === 1 ? 'mese' : 'mesi'})`;
+    gruppo.appendChild(opt);
+  });
+  // va inserito prima di "Tutto lo storico", che chiude l'elenco
+  const tutto = select.querySelector('option[value="tutto"]');
+  select.insertBefore(gruppo, tutto);
+}
+
 /* Il filtro per carta si popola dai dati e compare solo se serve davvero:
    con un conto e una sola carta sarebbe una scelta inutile. */
 function preparaFiltroConti() {
@@ -2177,7 +2207,8 @@ function impostaPeriodoIniziale() {
   const ultimo = mesi[mesi.length - 1];
 
   const salvato = JSON.parse(localStorage.getItem('spese_periodo') || 'null');
-  if (salvato && salvato.scelta) {
+  const esiste = (v) => !!$('#periodo').querySelector(`option[value="${v}"]`);
+  if (salvato && salvato.scelta && esiste(salvato.scelta)) {
     $('#periodo').value = salvato.scelta;
     $('#da-mese').value = salvato.da || mesi[0];
     $('#a-mese').value = salvato.a || ultimo;
@@ -2198,6 +2229,7 @@ function ricordaPeriodo() {
 }
 
 function avvia() {
+  preparaAnni();          // prima di leggere il periodo salvato
   impostaPeriodoIniziale();
   preparaFiltroConti();
   aggiornaPallino();
