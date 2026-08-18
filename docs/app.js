@@ -2132,8 +2132,17 @@ $('#periodo').addEventListener('change', () => {
 });
 $('#filtro-macro').addEventListener('change', disegna);
 $('#filtro-conto').addEventListener('change', disegna);
-$('#da-mese').addEventListener('change', () => { ricordaPeriodo(); disegna(); });
-$('#a-mese').addEventListener('change', () => { ricordaPeriodo(); disegna(); });
+
+/* I campi <input type="month"> sul telefono aprono il selettore di sistema,
+   che non sempre emette "change" quando lo chiudi: senza questi ascoltatori
+   il periodo sembra non cambiare mai. Il pulsante Aggiorna resta come via
+   sicura, indipendente dal comportamento del browser. */
+const aggiornaPeriodo = () => { ricordaPeriodo(); disegna(); };
+['change', 'input', 'blur'].forEach((evento) => {
+  $('#da-mese').addEventListener(evento, aggiornaPeriodo);
+  $('#a-mese').addEventListener(evento, aggiornaPeriodo);
+});
+$('#btn-aggiorna').addEventListener('click', aggiornaPeriodo);
 
 $('#btn-tema').addEventListener('click', () => {
   const attuale = document.documentElement.getAttribute('data-theme');
