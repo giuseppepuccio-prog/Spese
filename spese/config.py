@@ -18,6 +18,7 @@ MODELLO = {
     "email": "",
     "citta_abituali": [],
     "citta_famiglia": [],
+    "localita_vacanza": [],
     "nome_macro_famiglia": "Trasferte familiari",
     "conti_destinazione": {},
 }
@@ -41,6 +42,8 @@ FAMILIARI = [f.strip() for f in DATI.get("familiari", []) if f.strip()]
 EMAIL = (DATI.get("email") or "").strip()
 CITTA_ABITUALI = {c.strip().lower() for c in DATI.get("citta_abituali", []) if c.strip()}
 CITTA_FAMIGLIA = {c.strip().lower() for c in DATI.get("citta_famiglia", []) if c.strip()}
+# inizio del nome (Amex tronca: "PESCHIERA DEL G") o parola dell'esercente
+LOCALITA_VACANZA = [c.strip().lower() for c in DATI.get("localita_vacanza", []) if c.strip()]
 MACRO_FAMIGLIA = DATI.get("nome_macro_famiglia") or "Trasferte familiari"
 CONTI_DESTINAZIONE = DATI.get("conti_destinazione", {})
 
@@ -53,6 +56,7 @@ def modello_da_scrivere() -> str:
         "email": "tuo.indirizzo@example.com",
         "citta_abituali": ["milano", "roma"],
         "citta_famiglia": ["citta della famiglia"],
+        "localita_vacanza": ["localita di villeggiatura"],
         "nome_macro_famiglia": "Trasferte familiari",
         "conti_destinazione": {
             "IT00X0000": "Mutuo",

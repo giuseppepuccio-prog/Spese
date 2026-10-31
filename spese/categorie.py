@@ -231,6 +231,21 @@ def citta_famiglia(citta: str) -> bool:
     return (citta or "").strip().lower() in CITTA_FAMIGLIA
 
 
+# Localita' dove vai solo in vacanza: una spesa li' e' vacanza anche se
+# isolata, senza le soglie minime che servono per le altre citta'.
+LOCALITA_VACANZA = config.LOCALITA_VACANZA
+
+
+def in_localita_vacanza(t) -> bool:
+    if not LOCALITA_VACANZA or e_piattaforma(t):
+        return False
+    if t.categoria not in CATEGORIE_FISICHE | {"Da classificare", "Salute e farmacia"}:
+        return False
+    citta = (t.citta or "").strip().lower()
+    testo = f"{t.merchant} {t.descrizione}".lower()
+    return any(citta.startswith(l) or l in testo for l in LOCALITA_VACANZA)
+
+
 # Le navi verso la Sicilia sono il viaggio verso la famiglia: biglietti e
 # consumazioni a bordo vanno sotto quella voce.
 RE_NAVI = re.compile(
@@ -476,6 +491,11 @@ def categorizza(t, regole_personali: dict | None = None) -> None:
         t.macro = MACRO_FAMIGLIA
         return
 
+    # --- Localita' di villeggiatura: vacanza sempre ---------------------
+    if in_localita_vacanza(t):
+        t.macro = "Vacanze"
+        return
+
     # --- Estero fisico: vacanza -----------------------------------------
     if estero_fisico(t) and t.categoria in CATEGORIE_FISICHE:
         t.macro = "Vacanze"
@@ -646,6 +666,9 @@ def rileva_viaggi(transazioni: list, giorni_pausa: int = 3,
                 troppo_piccolo = True
             elif totale < spesa_minima_italia and not ha_alloggio:
                 troppo_piccolo = True
+
+        if troppo_piccolo and any(in_localita_vacanza(t) for t in gruppo):
+            troppo_piccolo = False
 
         if troppo_piccolo:
             for t in gruppo:  # non era una vacanza: spesa isolata

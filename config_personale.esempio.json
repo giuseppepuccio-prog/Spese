@@ -7,6 +7,7 @@
 
   "citta_abituali": ["milano", "roma"],
   "citta_famiglia": ["citta dove vive la famiglia"],
+  "localita_vacanza": ["localita dove vai solo in vacanza"],
   "nome_macro_famiglia": "Trasferte familiari",
 
   "conti_destinazione": {
