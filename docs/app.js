@@ -1552,7 +1552,7 @@ $('#btn-altri').addEventListener('click', () => {
 /* Ricalcolo sul periodo scelto, riusando le soglie decise in Python.
    Solo i mesi con stipendio accreditato: gli altri mostrerebbero le spese
    senza le entrate, simulando un rosso che non esiste. */
-const CAT_FISSE = ['Casa e utenze', 'Assicurazioni', 'Abbonamenti digitali',
+const CAT_FISSE = ['Casa e utenze', 'Assicurazioni', 'Abbonamenti digitali', 'AI',
   'Commissioni bancarie', 'Imposte e bolli', 'Servizi professionali',
   'Mutuo Siena', 'Mutuo Milano'];
 const CAT_COMPRIMIBILI = ['Ristoranti e bar', 'Shopping', 'Tempo libero',
@@ -1593,7 +1593,7 @@ function calcolaRisparmio() {
     if (t.macro === 'Entrate' || t.macro === 'Risparmio') return;
     if (!mesiValidi.has(t.data.slice(0, 7))) return;
     perCat[t.categoria] = (perCat[t.categoria] || 0) + -t.importo;
-    if (t.categoria === 'Abbonamenti digitali') {
+    if (t.categoria === 'Abbonamenti digitali' || t.categoria === 'AI') {
       const k = (t.merchant || t.descrizione).slice(0, 32);
       abbon[k] = (abbon[k] || 0) + -t.importo;
     }

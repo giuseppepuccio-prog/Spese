@@ -30,7 +30,7 @@ _RE_FAMILIARI = (
 # ---------------------------------------------------------------------------
 PIATTAFORME = (
     "PAYPAL", "AMAZON", "AMZN", "BOOKING HOLDINGS", "GYMPASS", "WELLHUB",
-    "OPENAI", "GOOGLE", "APPLE", "ITUNES", "NETFLIX", "SPOTIFY", "DISNEY",
+    "OPENAI", "ANTHROPIC", "CLAUDE", "MANUS", "GOOGLE", "APPLE", "ITUNES", "NETFLIX", "SPOTIFY", "DISNEY",
     "AUDIBLE", "MICROSOFT", "ADOBE", "DROPBOX", "LINKEDIN", "MEta", "VINTED",
     "SATISPAY", "SUMUP", "NEXI", "STRIPE", "REVOLUT", "AIRALO", "PLAYSTATION",
     "STEAM", "UBER EATS", "DELIVEROO", "GLOVO", "JUSTEAT", "JUST EAT",
@@ -110,7 +110,7 @@ REGOLE_CATEGORIA: list[tuple[str, str]] = [
                              r"POLIAMBULATOR|OTTIC|FISIOTERAP|VETERINAR"),
     ("Sport e benessere",    r"PALESTRA|GYM|FITNESS|WELLHUB|GYMPASS|PISCINA|PADEL|TENNIS|"
                              r"PLAYTOMIC|SCI\b|SKIPASS|SCUOLA SCI|KRISTAL|CENTRO SPORTIV"),
-    ("Abbonamenti digitali", r"NETFLIX|SPOTIFY|DISNEY|OPENAI|CHATGPT|GOOGLE|ICLOUD|APPLE|ITUNES|"
+    ("Abbonamenti digitali", r"NETFLIX|SPOTIFY|DISNEY|GOOGLE|ICLOUD|APPLE|ITUNES|"
                              r"AUDIBLE|MICROSOFT|ADOBE|DROPBOX|PRIME VIDEO|DAZN|SKY\b|NOW TV|"
                              r"QUILLBOT|AIRALO|SUBSCR|CVMAKER|LINKEDIN"),
     ("Figli e istruzione",   r"SCUOLA|ASILO|NIDO|UNIVERSIT|LIBRI|CARTOLER|MENSA|CENTRO ESTIV|"
@@ -137,6 +137,8 @@ REGOLE_CATEGORIA: list[tuple[str, str]] = [
 # Merchant riconosciuti uno per uno: piu' precisi delle regole generiche.
 # Aggiungine liberamente, oppure usa "regole_personali.json" dall'app.
 MERCHANT_NOTI = {
+    # prima di tutto il resto: "CLAUDE" o "MANUS" non devono finire altrove
+    "AI":              ("ANTHROPIC", "CLAUDE", "OPENAI", "CHATGPT", "MANUS"),
     "Ristoranti e bar": ("IL FARO 2.0", "SINGITA", "COL D'ORCIA",
                          "DE SLOOTHAAK", "HUISBROUWERIJ", "ALP LAGHET",
                          "RICCIARDI", "BEANY GREEN", "COMPTOIR", "ZACCAGNINO",
@@ -161,7 +163,7 @@ MERCHANT_NOTI = {
     "Sport e benessere": ("VALLE BIANCA", "SPORT MIX", "SIMPLE LIFE", "CST ITALIA",
                           "SCUOLA KRISTAL", "VIRGINACTI", "VIRGIN ACTIVE",
                           "QCTERME", "QC TERME"),
-    "Abbonamenti digitali": ("ANTHROPIC", "CLAUDE", "GAMMA.APP", "FIVERR",
+    "Abbonamenti digitali": ("GAMMA.APP", "FIVERR",
                              "NETWORK LINE", "RCS MEDIAGROUP", "CORRIERE",
                              "IL SOLE 24", "REPUBBLICA"),
     "Alloggio":        ("PARADU TUSCAN", "SANDMAN", "MOXY", "ROSA ALPLINA",
@@ -179,6 +181,10 @@ MERCHANT_NOTI = {
                         "SERVIZIO ELETTRICO", "ENEL ENERGIA", "PLENITUDE",
                         "ACQUEDOTTO", "GAS NATURAL", "ESTRA", "AGSM"),
 }
+
+# Piani Manus Pro sull'App Store (22 € base, 100 € e 229 € superiori),
+# piu' il credito di 54,84 € reso al passaggio di piano del 12/09/2026
+PREZZI_MANUS_APPSTORE = {22.00, 100.00, 229.00, 54.84}
 
 # Categorie Amex native -> nostre categorie (segnale gia' affidabile)
 MAPPA_AMEX = {
@@ -382,6 +388,12 @@ def assegna_categoria(t, regole_personali: dict | None = None) -> str:
     for categoria, nomi in MERCHANT_NOTI.items():
         if any(n in testo for n in nomi):
             return categoria
+
+    # 2b. Manus pagato dall'App Store: l'estratto dice solo "ITUNESAPPST",
+    # lo riconosce il prezzo. Le app Apple costano x,99: le cifre tonde
+    # sono i piani Manus (verificato sulle fatture Apple)
+    if "ITUNESAPPST" in testo and round(abs(t.importo), 2) in PREZZI_MANUS_APPSTORE:
+        return "AI"
 
     # 3. bonifici verso conti propri: mutui e ricariche, letti dall'IBAN
     destinazione = _conto_destinazione(t)

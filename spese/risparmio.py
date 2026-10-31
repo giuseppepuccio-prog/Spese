@@ -9,7 +9,7 @@ from statistics import median
 
 # Spese che si ripetono ogni mese quasi uguali: sono il tuo "costo fisso".
 CATEGORIE_FISSE = {
-    "Casa e utenze", "Assicurazioni", "Abbonamenti digitali",
+    "Casa e utenze", "Assicurazioni", "Abbonamenti digitali", "AI",
     "Commissioni bancarie", "Imposte e bolli", "Servizi professionali",
     "Mutuo Siena", "Mutuo Milano",
 }
