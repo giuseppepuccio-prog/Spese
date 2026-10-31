@@ -48,6 +48,36 @@ def cifra(dati: bytes, password: str) -> bytes:
     return salt + iv + testo_cifrato
 
 
+def chiedi_password(messaggio: str) -> str:
+    """Come getpass, ma su Windows mostra un * per ogni carattere.
+
+    Con getpass non compare nulla mentre scrivi, e sembra che la finestra
+    non accetti la tastiera.
+    """
+    try:
+        import msvcrt
+    except ImportError:
+        return getpass.getpass(messaggio)
+    print(messaggio, end="", flush=True)
+    caratteri = []
+    while True:
+        c = msvcrt.getwch()
+        if c in ("\r", "\n"):
+            print()
+            return "".join(caratteri)
+        if c == "\x03":
+            raise KeyboardInterrupt
+        if c == "\b":
+            if caratteri:
+                caratteri.pop()
+                print("\b \b", end="", flush=True)
+        elif c in ("\x00", "\xe0"):
+            msvcrt.getwch()  # tasti speciali (frecce, F1...): li ignoro
+        else:
+            caratteri.append(c)
+            print("*", end="", flush=True)
+
+
 def aggiorna_versione_sito() -> None:
     """Aggiunge ?v=<impronta> a CSS e JS in index.html.
 
@@ -85,7 +115,7 @@ def main() -> int:
                     help="cartella che contiene gli estratti conto")
     args = ap.parse_args()
 
-    password = args.password or getpass.getpass("Password per proteggere i dati: ")
+    password = args.password or chiedi_password("Password per proteggere i dati: ")
     if len(password) < 8:
         print("ERRORE: usa una password di almeno 8 caratteri.")
         return 1

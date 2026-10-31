@@ -20,8 +20,13 @@ def trova_estratti(radice: str) -> list[str]:
     Cosi' basta creare una cartella nuova ("02. Amex gold", una carta futura)
     perche' venga letta, senza toccare il codice.
     """
+    # l'app stessa vive dentro la cartella degli estratti: senza escluderla
+    # si attraversa tutto il .venv, migliaia di file su OneDrive
+    app = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     trovati = []
-    for cartella, _sub, file in os.walk(radice):
+    for cartella, sub, file in os.walk(radice):
+        sub[:] = [s for s in sub if not s.startswith(".")
+                  and os.path.abspath(os.path.join(cartella, s)) != app]
         for nome in sorted(file):
             if nome.startswith(("~$", ".")):
                 continue
